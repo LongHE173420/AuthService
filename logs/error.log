@@ -1,0 +1,4 @@
+2026-02-01 20:43:21 [ERROR]: Server error: {
+  "service": "auth-service",
+  "error": "listen EADDRINUSE: address already in use 0.0.0.0:3000"
+}

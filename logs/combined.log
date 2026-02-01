@@ -1,0 +1,136 @@
+2026-02-01 19:07:56 [INFO]: ✅ Đọc thành công 5 dòng {
+  "service": "auth-service"
+}
+2026-02-01 19:07:56 [INFO]: [OTP][REGISTER] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "814904",
+  "context": "REGISTER"
+}
+2026-02-01 19:07:56 [INFO]: [OTP][REGISTER] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84987654321",
+  "otp": "122448",
+  "context": "REGISTER"
+}
+2026-02-01 19:07:56 [INFO]: [OTP][REGISTER] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84912345678",
+  "otp": "561707",
+  "context": "REGISTER"
+}
+2026-02-01 19:07:56 [INFO]: [OTP][REGISTER] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84945678901",
+  "otp": "671425",
+  "context": "REGISTER"
+}
+2026-02-01 19:07:56 [INFO]: [OTP][REGISTER] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84923456789",
+  "otp": "466987",
+  "context": "REGISTER"
+}
+2026-02-01 19:12:58 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:14:25 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:24:31 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:29:22 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:30:25 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:31:14 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:32:15 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:34:42 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:35:33 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:36:09 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:39:57 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:40:31 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:49:01 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:50:40 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:51:44 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 19:52:38 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 20:10:35 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 20:30:29 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 20:35:58 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "339390",
+  "context": "LOGIN"
+}
+2026-02-01 20:40:45 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "540539",
+  "context": "LOGIN"
+}
+2026-02-01 20:43:01 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "292912",
+  "context": "LOGIN"
+}
+2026-02-01 20:43:21 [ERROR]: Server error: {
+  "service": "auth-service",
+  "error": "listen EADDRINUSE: address already in use 0.0.0.0:3000"
+}
+2026-02-01 20:43:41 [INFO]: [auth-service] running at http://localhost:3000 {
+  "service": "auth-service"
+}
+2026-02-01 20:43:46 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "495326",
+  "context": "LOGIN"
+}
+2026-02-01 20:44:12 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "194128",
+  "context": "LOGIN"
+}
+2026-02-01 23:12:05 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "637997",
+  "context": "LOGIN"
+}
+2026-02-01 23:15:02 [INFO]: [OTP][LOGIN] Sent OTP to user {
+  "service": "auth-service",
+  "username": "84901234567",
+  "otp": "842330",
+  "context": "LOGIN"
+}

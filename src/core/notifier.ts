@@ -1,3 +1,5 @@
+import logger from "../config/logger";
+
 export function notifyOtp(username: string, otp: string, context: string) {
-  console.log(`[OTP][${context}] user=${username} otp=${otp}`);
+  logger.info(`[OTP][${context}] Sent OTP to user`, { username, otp, context });
 }

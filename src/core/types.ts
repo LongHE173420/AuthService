@@ -1,24 +1,3 @@
-export type ApiRes<T = unknown> = {
-  isSucceed: boolean;
-  message?: string;
-  data?: T;
-};
-
-export function ok<T>(data: T, message?: string): ApiRes<T> {
-  return { isSucceed: true, message, data };
-}
-
-export function fail<T = unknown>(message: string, data?: T): ApiRes<T> {
-  return { isSucceed: false, message, data };
-}
-
-export function ensureOk<T>(res: ApiRes<T>, fallback: string): ApiRes<T> {
-  if (!res || res.isSucceed === false) {
-    throw new Error(res?.message ?? fallback);
-  }
-  return res;
-}
-
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 
 export type Tokens = {

@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { validateUsername, registerDraft, verifyRegisterOtp, resendRegisterOtp } from "../services/register.service";
+import { validatePhone, registerDraft, verifyRegisterOtp, resendRegisterOtp } from "../services/register.service";
 import { login, verifyLoginOtp, resendLoginOtp, refresh, debugRevoke } from "../services/auth.service";
-import { ok, fail } from "../core/types";
+import { ok, fail } from "../core/response";
 import { secondsLeftInWindow, getPhase } from "../core/otpSession";
-import { db } from "../db/db";
+import { mysqlPool } from "../config/database";
 
 export const authRoutes = Router();
 
@@ -12,43 +12,43 @@ function deviceIdFrom(req: any) {
 }
 
 // ===== Register
-authRoutes.post("/validate-username", (req, res) => {
+authRoutes.post("/validate-phone", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
-    const { username } = req.body ?? {};
-    const out = validateUsername(String(username ?? ""), deviceId);
+    const { phone } = req.body ?? {};
+    const out = await validatePhone(String(phone ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
-    res.json(fail(e?.message ?? "ERR_VALIDATE_USERNAME"));
+    res.json(fail(e?.message ?? "ERR_VALIDATE_PHONE"));
   }
 });
 
-authRoutes.post("/register", (req, res) => {
+authRoutes.post("/register", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
-    const out = registerDraft(req.body, deviceId);
+    const out = await registerDraft(req.body, deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_REGISTER"));
   }
 });
 
-authRoutes.post("/verify-register-otp", (req, res) => {
+authRoutes.post("/verify-register-otp", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
-    const { username, otp } = req.body ?? {};
-    const out = verifyRegisterOtp(String(username ?? ""), String(otp ?? ""), deviceId);
+    const { phone, otp } = req.body ?? {};
+    const out = await verifyRegisterOtp(String(phone ?? ""), String(otp ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_VERIFY_REGISTER_OTP"));
   }
 });
 
-authRoutes.post("/resend-otp-register", (req, res) => {
+authRoutes.post("/resend-otp-register", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
-    const { username } = req.body ?? {};
-    const out = resendRegisterOtp(String(username ?? ""), deviceId);
+    const { phone } = req.body ?? {};
+    const out = await resendRegisterOtp(String(phone ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_RESEND_REGISTER_OTP"));
@@ -56,47 +56,66 @@ authRoutes.post("/resend-otp-register", (req, res) => {
 });
 
 // helper debug: xem trạng thái OTP session register
-authRoutes.get("/debug/register-session", (req, res) => {
-  const username = String(req.query.username ?? "").toLowerCase();
-  const p = db.pendingRegs.get(username);
-  if (!p) return res.json(fail("NO_PENDING_REGISTER"));
-  res.json(ok({
-    username,
-    deviceId: p.deviceId,
-    phase: getPhase(p.session),
-    secondsLeft: secondsLeftInWindow(p.session),
-    resendCount: p.session.resendCount
-  }));
+authRoutes.get("/debug/register-session", async (req, res) => {
+  try {
+    const phone = String(req.query.phone ?? "");
+    const [pendingRegs] = await (require("../config/database").mysqlPool).query(
+      "SELECT * FROM pending_registrations WHERE phone = ?",
+      [phone]
+    );
+
+    if (pendingRegs.length === 0) return res.json(fail("NO_PENDING_REGISTER"));
+
+    const pending = (pendingRegs as any)[0];
+    const mockSession = {
+      otp: pending.otp,
+      createdAt: pending.createdAt,
+      expiresAt: pending.expiresAt,
+      resendCount: pending.resendCount,
+    };
+
+    res.json(
+      ok({
+        phone,
+        deviceId: pending.deviceId,
+        phase: getPhase(mockSession),
+        secondsLeft: secondsLeftInWindow(mockSession),
+        resendCount: pending.resendCount,
+      })
+    );
+  } catch (e: any) {
+    res.json(fail(e?.message ?? "ERR_DEBUG_REGISTER_SESSION"));
+  }
 });
 
 // ===== Login
-authRoutes.post("/login", (req, res) => {
+authRoutes.post("/login", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
     const { username, password } = req.body ?? {};
-    const out = login(String(username ?? ""), String(password ?? ""), deviceId);
+    const out = await login(String(username ?? ""), String(password ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_LOGIN"));
   }
 });
 
-authRoutes.post("/verify-login-otp", (req, res) => {
+authRoutes.post("/verify-login-otp", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
     const { username, otp } = req.body ?? {};
-    const out = verifyLoginOtp(String(username ?? ""), String(otp ?? ""), deviceId);
+    const out = await verifyLoginOtp(String(username ?? ""), String(otp ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_VERIFY_LOGIN_OTP"));
   }
 });
 
-authRoutes.post("/resend-otp-login", (req, res) => {
+authRoutes.post("/resend-otp-login", async (req, res) => {
   try {
     const deviceId = deviceIdFrom(req);
     const { username } = req.body ?? {};
-    const out = resendLoginOtp(String(username ?? ""), deviceId);
+    const out = await resendLoginOtp(String(username ?? ""), deviceId);
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_RESEND_LOGIN_OTP"));
@@ -104,25 +123,45 @@ authRoutes.post("/resend-otp-login", (req, res) => {
 });
 
 // helper debug: xem trạng thái OTP session login
-authRoutes.get("/debug/login-session", (req, res) => {
-  const username = String(req.query.username ?? "").toLowerCase();
-  const deviceId = String(req.query.deviceId ?? "dev-123456");
-  const p = db.pendingLogin.get(`${username}|${deviceId}`);
-  if (!p) return res.json(fail("NO_PENDING_LOGIN_OTP"));
-  res.json(ok({
-    username,
-    deviceId,
-    phase: getPhase(p.session),
-    secondsLeft: secondsLeftInWindow(p.session),
-    resendCount: p.session.resendCount
-  }));
+authRoutes.get("/debug/login-session", async (req, res) => {
+  try {
+    const phone = String(req.query.phone ?? "");
+    const deviceId = String(req.query.deviceId ?? "dev-123456");
+    
+    const [pendingLogins] = await mysqlPool.query(
+      "SELECT * FROM pending_login WHERE phone = ? AND deviceId = ?",
+      [phone, deviceId]
+    ) as any;
+
+    if (!Array.isArray(pendingLogins) || pendingLogins.length === 0) {
+      return res.json(fail("NO_PENDING_LOGIN_OTP"));
+    }
+
+    const pending = pendingLogins[0] as any;
+    const mockSession = {
+      otp: pending.otp,
+      createdAt: pending.createdAt,
+      expiresAt: pending.expiresAt,
+      resendCount: pending.resendCount,
+    };
+
+    res.json(ok({
+      phone,
+      deviceId,
+      phase: getPhase(mockSession),
+      secondsLeft: secondsLeftInWindow(mockSession),
+      resendCount: pending.resendCount,
+    }));
+  } catch (e: any) {
+    res.json(fail(e?.message ?? "ERR_DEBUG_LOGIN_SESSION"));
+  }
 });
 
 // ===== Refresh
-authRoutes.post("/refresh-token", (req, res) => {
+authRoutes.post("/refresh-token", async (req, res) => {
   try {
     const { refreshToken } = req.body ?? {};
-    const out = refresh(String(refreshToken ?? ""));
+    const out = await refresh(String(refreshToken ?? ""));
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_REFRESH"));
@@ -130,10 +169,10 @@ authRoutes.post("/refresh-token", (req, res) => {
 });
 
 // ===== Debug revoke
-authRoutes.post("/debug/revoke", (req, res) => {
+authRoutes.post("/debug/revoke", async (req, res) => {
   try {
     const { username } = req.body ?? {};
-    const out = debugRevoke(String(username ?? ""));
+    const out = await debugRevoke(String(username ?? ""));
     res.json(out);
   } catch (e: any) {
     res.json(fail(e?.message ?? "ERR_REVOKE"));
